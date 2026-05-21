@@ -78,6 +78,7 @@ jobs:
   # - Configure environment variables.
   # - Checkout repository.
   # - Set up Node.js.
+  # - Set up PHP.
   # - Log debug information.
   # - Install npm dependencies.
   # - Install Playwright browsers.
@@ -126,6 +127,14 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: npm
+
+      - name: Set up PHP
+        if: ${{ inputs.subject == 'base' }}
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: ${{ inputs.php-version }}
+          tools: wp-cli
+          coverage: none
 
       - name: Log debug information
         run: |
@@ -183,7 +192,7 @@ jobs:
         if: ${{ inputs.subject == 'base' }}
         run: |
           VERSION="${BASE_TAG%.0}"
-          npm run env:cli -- core download --version="$VERSION" --force --path="/var/www/${LOCAL_DIR}"
+          wp core download --version="$VERSION" --force --path="${LOCAL_DIR}"
 
       - name: Install object cache drop-in
         if: ${{ inputs.memcached }}
